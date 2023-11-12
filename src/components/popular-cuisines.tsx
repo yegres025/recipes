@@ -1,25 +1,34 @@
-import {useState} from 'react'
+import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { getRecipeThunk, currentCuisines, recipesDataReset,InitialState } from '../store/slice';
+import {
+  getRecipeThunk,
+  currentCuisines,
+  recipesDataReset,
+  InitialState,
+} from '../store/slice';
 import { popularCuisines } from '../utilities/consts/map-data/map-consts';
 import { AppDispatch } from '../store';
 export default function PopularCuisines() {
-  const [selectedCuisine, setSelectCuisine] = useState<string>('')
+  const [selectedCuisine, setSelectCuisine] = useState<string>('');
   const { cuisines } = useSelector(
     (state: { mainReducer: InitialState }) => state.mainReducer
   );
   const dispatch: AppDispatch = useDispatch();
   const navigate = useNavigate();
+
+  const searchParams = {
+    cuisineType: cuisines,
+  };
     
 
   const handleSubmit = async () => {
-    if (selectedCuisine === cuisines){
-      navigate('/recipe-page')
-      return
+    if (selectedCuisine === cuisines) {
+      navigate('/recipe-page');
+      return;
     }
-    dispatch(recipesDataReset())
-    await dispatch(getRecipeThunk({mainParamSearch: cuisines}));
+    dispatch(recipesDataReset());
+    await dispatch(getRecipeThunk({ mainParamSearch: searchParams }));
     navigate('/recipe-page');
   };
 
@@ -36,11 +45,11 @@ export default function PopularCuisines() {
         {popularCuisines.map((item) => (
           <button className='current-category' key={item.id}>
             <img
-              onClick={(e: React.MouseEvent<HTMLImageElement, MouseEvent>) =>{
-                dispatch(currentCuisines(e.target.alt))
-                setSelectCuisine(cuisines)
-              }
-              }
+              onClick={(e: React.MouseEvent<HTMLImageElement, MouseEvent>) => {
+                const imageElement = e.target as HTMLImageElement;
+                dispatch(currentCuisines(imageElement.alt));
+                setSelectCuisine(cuisines);
+              }}
               alt={item.name}
               src={item.src}
             />

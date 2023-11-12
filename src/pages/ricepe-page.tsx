@@ -1,13 +1,11 @@
-import ErrorPage from './error-page';
 import ClearIcon from '@mui/icons-material/Clear';
 import { useSelector, useDispatch } from 'react-redux';
 import { TextField, IconButton } from '@mui/material';
 import { AppDispatch } from '../store';
 import { Link } from 'react-router-dom';
-import { saveCurrentRecipe } from '../store/slice';
+import { errorReset, saveCurrentRecipe } from '../store/slice';
 import {
   InitialState,
-  getCurrentRecipesThunk,
   getRecipeThunk,
   recipesDataReset,
   saveRecipeName,
@@ -15,33 +13,24 @@ import {
 import { MutatingDots } from 'react-loader-spinner';
 
 export default function RecipePage() {
-  const { recipes, paginationUrl, recipeName, cuisines, spinnerVisible, showError } =
+  const { recipes, paginationUrl, recipeName, spinnerVisible, showError } =
     useSelector((state: { mainReducer: InitialState }) => state.mainReducer);
   const dispatch: AppDispatch = useDispatch();
-  console.log(showError);
-  
-  const handleButton = async () => {
-    if (recipeName) {
-      await dispatch(
-        getCurrentRecipesThunk({
-          recipeName: recipeName,
-          nextPaginationStep: true,
-          paginationUrl: paginationUrl,
-        })
-      );
-    }
-    await dispatch(
-      getRecipeThunk({
-        mainParamSearch: cuisines,
-        nextPaginationStep: true,
-        paginationUrl: paginationUrl,
-      })
-    );
+
+  const paginationParam = {
+    paginationUrl: paginationUrl,
+  };
+
+  const currentRecipeParam = {
+    q: recipeName,
   };
 
   const handleSubmit = async () => {
+    if (showError){
+      dispatch(errorReset())
+    }
     dispatch(recipesDataReset());
-    await dispatch(getCurrentRecipesThunk({ recipeName: recipeName }));
+    await dispatch(getRecipeThunk({ mainParamSearch: currentRecipeParam }));
   };
 
   const saveRecipe = (id: string) => {
@@ -49,11 +38,9 @@ export default function RecipePage() {
     dispatch(saveCurrentRecipe(recipe));
   };
 
-  if(showError){
-    return(
-      <ErrorPage />
-    )
-  }
+  const handleClickLoadMoreRecipes = async () => {
+    await dispatch(getRecipeThunk({ mainParamSearch: paginationParam }));
+  };
 
   return (
     <div className='recipe-search-container'>
@@ -76,6 +63,15 @@ export default function RecipePage() {
           <ClearIcon color='success' />
         </IconButton>
       </form>
+      {showError ? (
+        <div className='recipe-search-error'>
+          <span>
+            Ooooops. <br /> Nothing was found. Enter another recipe
+          </span>
+          
+          <img src='src/assets/error-burak-gif.gif'/>
+        </div>
+      ) : null}
       <div className='recipe-search-grid'>
         {recipes.map((item) => (
           <div className='current-recipe-search' key={item.recipe.uri}>
@@ -83,10 +79,14 @@ export default function RecipePage() {
               className='current-recipe-search-link'
               to='/recipe-page/selected-recipe'
             >
-              <img
-                onClick={() => saveRecipe(item.recipe.uri)}
-                src={item.recipe.image}
-              />
+              <div>
+                <div>
+                  <img
+                    onClick={() => saveRecipe(item.recipe.uri)}
+                    src={item.recipe.image}
+                  />
+                </div>
+              </div>
               <span>{item.recipe.label}</span>
             </Link>
           </div>
@@ -100,9 +100,14 @@ export default function RecipePage() {
         secondaryColor='#ac789d'
         wrapperClass='spinner'
       />
-      {!spinnerVisible && <button onClick={handleButton} className='recipe-search-load-more-btn'>
-        Load More
-      </button>}
+      {!spinnerVisible && !showError && (
+        <button
+          onClick={handleClickLoadMoreRecipes}
+          className='recipe-search-load-more-btn'
+        >
+          Load More
+        </button>
+      )}
     </div>
   );
 }
