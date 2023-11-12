@@ -2,8 +2,6 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import {
   GetRecipesParams,
   getRecipes,
-  getCurrentRecipes,
-  GetCurrentRecipeParams,
   RecipeData,
   Recipe,
 } from '../utilities/api/get-data-recipe';
@@ -13,7 +11,6 @@ export interface InitialState {
   cuisines: string;
   paginationUrl: string;
   currentRecipes: RecipeData | [];
-  randomRecipes: RecipeData[];
   currentRecipe: Recipe | null;
   recipeName: string;
   spinnerVisible: boolean;
@@ -25,7 +22,6 @@ const initialState: InitialState = {
   cuisines: '',
   paginationUrl: '',
   currentRecipes: [],
-  randomRecipes: [],
   currentRecipe: null,
   recipeName: '',
   spinnerVisible: false,
@@ -35,14 +31,12 @@ const initialState: InitialState = {
 export const getRecipeThunk = createAsyncThunk(
   'recipes/getRecipeData',
   async (
-    { mainParamSearch, nextPaginationStep, paginationUrl }: GetRecipesParams,
+    { mainParamSearch}: GetRecipesParams,
     thunkAPI
   ) => {
     try {
       const response = await getRecipes({
         mainParamSearch,
-        nextPaginationStep,
-        paginationUrl,
       });
       return response;
     } catch (error) {
@@ -51,25 +45,6 @@ export const getRecipeThunk = createAsyncThunk(
   }
 );
 
-export const getCurrentRecipesThunk = createAsyncThunk(
-  'recipes/getCurrentRecipes',
-  async (
-    { recipeName, nextPaginationStep, paginationUrl }: GetCurrentRecipeParams,
-    thunkAPI
-  ) => {
-    try {
-      const response = await getCurrentRecipes({
-        recipeName,
-        nextPaginationStep,
-        paginationUrl,
-      });
-
-      return response;
-    } catch (error) {
-      return thunkAPI.rejectWithValue({ error });
-    }
-  }
-);
 
 const mainReducer = createSlice({
   name: 'recipes',
@@ -102,39 +77,20 @@ const mainReducer = createSlice({
       .addCase(getRecipeThunk.pending, (state) => {
         state.spinnerVisible = true;
       })
-      .addCase(getRecipeThunk.fulfilled, (state, action) => {
-        if (state.randomRecipes.length < 21) {
-          state.randomRecipes = state.randomRecipes.concat(action.payload.hits);
-          return;
-        }
+      .addCase(getRecipeThunk.fulfilled, (state, action) => {       
         state.recipes = state.recipes.concat(action.payload.hits);
         state.paginationUrl = action.payload._links?.next?.href || '';
-        state.spinnerVisible = false
+        state.spinnerVisible = false        
+
+        if (action.payload.hits.length === 0){
+          state.showError = true
+        }
       })
       .addCase(getRecipeThunk.rejected, (state) => {
         state.spinnerVisible = false
-      })
-
-
-      .addCase(getCurrentRecipesThunk.pending, (state) => {
-        state.spinnerVisible = true
-      })
-      .addCase(getCurrentRecipesThunk.fulfilled, (state, action) => {
-        if(!action.payload.count){
-          state.showError = true
-        }
-        
-
-        state.recipes = state.recipes.concat(action.payload.hits);
-        state.paginationUrl = action.payload._links?.next?.href || '';
-        if(state.spinnerVisible){
-          state.spinnerVisible = false
-        }
-      })
-      .addCase(getCurrentRecipesThunk.rejected, (state) => {
-        state.spinnerVisible = false
         state.showError = true
       })
+
   },
 });
 

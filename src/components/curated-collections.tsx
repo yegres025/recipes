@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { AppDispatch } from '../store';
 import {
   InitialState,
-  getCurrentRecipesThunk,
+  getRecipeThunk,
   recipesDataReset,
   saveRecipeName
 } from '../store/slice';
@@ -17,13 +17,16 @@ export default function CuratedCollections() {
   );
   
   const handleButton = async (param: string) => {
+    const curatedCollectionsParams = {
+      param,
+      paginationUrl
+    }
+
     dispatch(saveRecipeName(param))
     dispatch(recipesDataReset());
     await dispatch(
-      getCurrentRecipesThunk({
-        recipeName: param,
-        nextPaginationStep: true,
-        paginationUrl: paginationUrl,
+      getRecipeThunk({
+        mainParamSearch: curatedCollectionsParams,
       })
     );
     navigate('/recipe-page');

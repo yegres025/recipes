@@ -1,5 +1,5 @@
 import { url } from '../consts/api-params.ts/recipe-api';
-
+import { OptionParams } from '../consts/api-params.ts/recipe-api';
 export interface RecipeData {
   recipe: Recipe;
   _links: Links;
@@ -127,36 +127,17 @@ interface SubTotalDailyNutrients {
 }
 
 export interface GetRecipesParams {
-  mainParamSearch: string;
-  nextPaginationStep?: boolean;
-  paginationUrl?: string;
+  mainParamSearch: OptionParams;
 }
 
-export interface GetCurrentRecipeParams {
-  recipeName: string;
-  nextPaginationStep?: boolean;
-  paginationUrl?: string;
-}
 
 async function getRecipes({
   mainParamSearch,
-  nextPaginationStep,
-  paginationUrl = '',
+
 }: GetRecipesParams): Promise<RecipeData> {
-  if (mainParamSearch !== 'central europe') {
-    url.searchParams.set('random', String(false));
-    url.searchParams
-      .getAll('mealType')
-      .forEach(() => url.searchParams.delete('mealType'));
-  }
 
-  if (nextPaginationStep) {
-    url.href = paginationUrl;
-  }
-  url.searchParams.delete('q');
-  url.searchParams.set('cuisineType', mainParamSearch);
 
-  const response = await fetch(url);
+  const response = await fetch(url(mainParamSearch));
   try {
     if (!response.ok) {
       throw new Error(`Error ${response.status}`);
@@ -167,30 +148,5 @@ async function getRecipes({
   }
 }
 
-async function getCurrentRecipes({
-  recipeName,
-  nextPaginationStep,
-  paginationUrl = '',
-}: GetCurrentRecipeParams): Promise<RecipeData> {
-  url.searchParams.delete('random')
-  if (nextPaginationStep) {
-    url.href = paginationUrl;
-  }
 
-  url.searchParams.delete('cuisineType');
-  url.searchParams.delete('mealType');
-  url.searchParams.set('q', recipeName);
-
-  const response = await fetch(url);
-
-  try {
-    if (!response.ok) {
-      throw new Error(`Error ${response.status}`);
-    }
-    return await response.json();
-  } catch {
-    throw new Error(`Catch err`);
-  }
-}
-
-export { getRecipes, getCurrentRecipes };
+export { getRecipes };
