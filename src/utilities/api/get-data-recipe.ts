@@ -1,11 +1,21 @@
 import { url } from '../consts/api-params.ts/recipe-api';
 import { OptionParams } from '../consts/api-params.ts/recipe-api';
-export interface RecipeData {
-  recipe: Recipe;
+
+
+export interface FullResponeRecipes {
+  count: number;
+  from: number;
+  to: number;
+  hits: Recipes[];
+  _links: Links
+}
+
+export interface Recipes {
+  recipe: CurrentRecipe;
   _links: Links;
 }
 
-export interface Recipe {
+export interface CurrentRecipe {
   calories: number;
   cautions: string[];
   co2EmissionsClass: string;
@@ -127,25 +137,26 @@ interface SubTotalDailyNutrients {
 }
 
 export interface GetRecipesParams {
-  mainParamSearch: OptionParams;
+  mainParamsSearch: OptionParams;
 }
 
 
 async function getRecipes({
-  mainParamSearch,
+  mainParamsSearch,
 
-}: GetRecipesParams): Promise<RecipeData> {
+}: GetRecipesParams): Promise<FullResponeRecipes> {
 
 
-  const response = await fetch(url(mainParamSearch));
+  const response = await fetch(url(mainParamsSearch));
   try {
     if (!response.ok) {
       throw new Error(`Error ${response.status}`);
-    }
+    }    
     return await response.json();
   } catch (error) {
     throw new Error('Catch err');
   }
+
 }
 
 

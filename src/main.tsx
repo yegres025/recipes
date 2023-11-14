@@ -5,7 +5,7 @@ import { RouterProvider, createBrowserRouter } from 'react-router-dom';
 import { Provider } from 'react-redux';
 import store from './store/index.ts';
 import HomePage from './pages/home-page.tsx';
-import RecipePage from './pages/ricepe-page.tsx';
+import RecipePage from './pages/ricepes-page.tsx';
 import SelectedRecipe from './pages/selected-recipe.tsx';
 import Drinks from './pages/drinks.tsx';
 import ErrorPage from './pages/error-page.tsx';

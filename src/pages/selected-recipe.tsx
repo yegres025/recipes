@@ -2,7 +2,7 @@ import { useSelector } from 'react-redux';
 import { InitialState } from '../store/slice';
 
 export default function SelectedRecipe() {
-  const { randomRecipes, currentRecipe } = useSelector(
+  const { recipes, currentRecipe } = useSelector(
     (state: { mainReducer: InitialState }) => state.mainReducer
   );
 
@@ -149,7 +149,7 @@ export default function SelectedRecipe() {
                 Other recipes
               </span>
               <div className='selected-recipe-nutrition-other-recipes'>
-                {randomRecipes.slice(0,4).map((item) => (
+                {recipes.slice(0,4).map((item) => (
                   <div
                     className='selected-recipe-nutrition-other-recipes-container'
                     key={item.recipe.uri}

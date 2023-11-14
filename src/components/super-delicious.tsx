@@ -1,12 +1,12 @@
 import { Rating } from '@mui/material';
-import { RecipeData } from '../utilities/api/get-data-recipe';
+import { Recipes } from '../utilities/api/get-data-recipe';
 import { useDispatch } from 'react-redux';
 import { AppDispatch } from '../store';
 import { saveCurrentRecipe } from '../store/slice';
 import { useNavigate } from 'react-router-dom';
 
 export interface SuperDeliciousProps {
-  randomRecipes: RecipeData[];
+  randomRecipes: Recipes[];
 }
 
 export default function SuperDelicious({ randomRecipes }: SuperDeliciousProps) {

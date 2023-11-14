@@ -1,9 +1,8 @@
-import ClearIcon from '@mui/icons-material/Clear';
 import { useSelector, useDispatch } from 'react-redux';
-import { TextField, IconButton } from '@mui/material';
 import { AppDispatch } from '../store';
 import { Link } from 'react-router-dom';
 import { errorReset, saveCurrentRecipe } from '../store/slice';
+import SearchForm from '../components/searchForm';
 import {
   InitialState,
   getRecipeThunk,
@@ -11,8 +10,9 @@ import {
   saveRecipeName,
 } from '../store/slice';
 import { MutatingDots } from 'react-loader-spinner';
+import { FormEvent } from 'react';
 
-export default function RecipePage() {
+export default function RecipesPage() {
   const { recipes, paginationUrl, recipeName, spinnerVisible, showError } =
     useSelector((state: { mainReducer: InitialState }) => state.mainReducer);
   const dispatch: AppDispatch = useDispatch();
@@ -25,12 +25,13 @@ export default function RecipePage() {
     q: recipeName,
   };
 
-  const handleSubmit = async () => {
-    if (showError){
-      dispatch(errorReset())
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (showError) {
+      dispatch(errorReset());
     }
     dispatch(recipesDataReset());
-    await dispatch(getRecipeThunk({ mainParamSearch: currentRecipeParam }));
+    await dispatch(getRecipeThunk({ mainParamsSearch: currentRecipeParam }));
   };
 
   const saveRecipe = (id: string) => {
@@ -39,39 +40,15 @@ export default function RecipePage() {
   };
 
   const handleClickLoadMoreRecipes = async () => {
-    await dispatch(getRecipeThunk({ mainParamSearch: paginationParam }));
+    await dispatch(getRecipeThunk({ mainParamsSearch: paginationParam }));
   };
 
   return (
     <div className='recipe-search-container'>
-      <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          handleSubmit();
-        }}
-        className='recipe-page-form'
-      >
-        <TextField
-          onChange={(e) => dispatch(saveRecipeName(e.target.value))}
-          type='input'
-          label='Search recipe'
-          variant='standard'
-          size='medium'
-          color='success'
-        />
-        <IconButton>
-          <ClearIcon color='success' />
-        </IconButton>
-      </form>
-      {showError ? (
-        <div className='recipe-search-error'>
-          <span>
-            Ooooops. <br /> Nothing was found. Enter another recipe
-          </span>
-          
-          <img src='src/assets/error-burak-gif.gif'/>
-        </div>
-      ) : null}
+      <SearchForm
+        onSubmit={(e) => handleSubmit(e)}
+        onChange={(e) => dispatch(saveRecipeName(e.target.value))}
+      />
       <div className='recipe-search-grid'>
         {recipes.map((item) => (
           <div className='current-recipe-search' key={item.recipe.uri}>
@@ -92,6 +69,15 @@ export default function RecipePage() {
           </div>
         ))}
       </div>
+      {showError ? (
+        <div className='recipe-search-error'>
+          <span>
+            Ooooops. <br /> There is nothing . Enter another recipe
+          </span>
+
+          <img src='src/assets/error-burak-gif.gif' />
+        </div>
+      ) : null}
       <MutatingDots
         visible={spinnerVisible}
         radius='14.5'
@@ -100,7 +86,7 @@ export default function RecipePage() {
         secondaryColor='#ac789d'
         wrapperClass='spinner'
       />
-      {!spinnerVisible && !showError && (
+      {!spinnerVisible && !showError && paginationUrl && (
         <button
           onClick={handleClickLoadMoreRecipes}
           className='recipe-search-load-more-btn'

@@ -1,5 +1,5 @@
-const apiKey = 'a652b5dea21fd205364414ec96220750';
-const appId = '55db0493';
+
+import { recipeParams } from "./consts";
 
 export interface OptionParams {
   cuisineType?: string;
@@ -7,6 +7,7 @@ export interface OptionParams {
   random?: boolean;
   mealType?: string;
   paginationUrl?: string;
+  health?: string;
 }
 
 const typeGuard = (value: string | boolean) => {
@@ -23,24 +24,28 @@ const url = function (option: OptionParams) {
     url = new URL(option.paginationUrl);
   }
 
-  url.searchParams.append('app_id', appId);
-  url.searchParams.append('app_key', apiKey);
+  url.searchParams.append('app_id', recipeParams.appId);
+  url.searchParams.append('app_key', recipeParams.apiKey);
   url.searchParams.append('type', 'public');
 
+  if(option.health){
+    url.searchParams.append(recipeParams.health, option.health)
+  }
+
   if (option.q) {
-    url.searchParams.append('q', option.q);
+    url.searchParams.append(recipeParams.q, option.q);
   }
 
   if (option.cuisineType) {
-    url.searchParams.append('cuisineType', option.cuisineType);
+    url.searchParams.append(recipeParams.cuisineType, option.cuisineType);
   }
 
   if (option.random) {
-    url.searchParams.append('random', typeGuard(option.random));
+    url.searchParams.append(recipeParams.random, typeGuard(option.random));
   }
 
   if (option.mealType) {
-    url.searchParams.append('mealType', 'lunch');
+    url.searchParams.append(recipeParams.mealType, 'lunch');
   }
 
   return url;

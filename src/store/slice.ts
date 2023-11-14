@@ -2,41 +2,42 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import {
   GetRecipesParams,
   getRecipes,
-  RecipeData,
-  Recipe,
+  CurrentRecipe,
+  Recipes,
 } from '../utilities/api/get-data-recipe';
 
 export interface InitialState {
-  recipes: RecipeData[];
+  recipes: Recipes[];
+  alcoholCocktail: Recipes[];
+  alcoholFreeCocktail: Recipes[];
   cuisines: string;
   paginationUrl: string;
-  currentRecipes: RecipeData | [];
-  currentRecipe: Recipe | null;
+  currentRecipes: Recipes | [];
+  currentRecipe: CurrentRecipe | null;
   recipeName: string;
   spinnerVisible: boolean;
-  showError: boolean
+  showError: boolean;
 }
 
 const initialState: InitialState = {
   recipes: [],
+  alcoholCocktail: [],
+  alcoholFreeCocktail: [],
   cuisines: '',
   paginationUrl: '',
   currentRecipes: [],
   currentRecipe: null,
   recipeName: '',
   spinnerVisible: false,
-  showError: false
+  showError: false,
 };
 
 export const getRecipeThunk = createAsyncThunk(
   'recipes/getRecipeData',
-  async (
-    { mainParamSearch}: GetRecipesParams,
-    thunkAPI
-  ) => {
+  async ({ mainParamsSearch }: GetRecipesParams, thunkAPI) => {
     try {
       const response = await getRecipes({
-        mainParamSearch,
+        mainParamsSearch,
       });
       return response;
     } catch (error) {
@@ -44,7 +45,6 @@ export const getRecipeThunk = createAsyncThunk(
     }
   }
 );
-
 
 const mainReducer = createSlice({
   name: 'recipes',
@@ -69,28 +69,45 @@ const mainReducer = createSlice({
       state.recipeName = action.payload;
     },
     errorReset(state) {
-      state.showError = false
-    }
+      state.showError = false;
+    },
   },
   extraReducers: (builder) => {
     builder
       .addCase(getRecipeThunk.pending, (state) => {
         state.spinnerVisible = true;
       })
-      .addCase(getRecipeThunk.fulfilled, (state, action) => {       
-        state.recipes = state.recipes.concat(action.payload.hits);
-        state.paginationUrl = action.payload._links?.next?.href || '';
-        state.spinnerVisible = false        
+      .addCase(getRecipeThunk.fulfilled, (state, action) => {
+        if (!action.meta.arg.mainParamsSearch.health) {
+          state.recipes = state.recipes.concat(action.payload.hits);
+        }
 
-        if (action.payload.hits.length === 0){
-          state.showError = true
+        if (action.meta.arg.mainParamsSearch.health === 'alcohol-cocktail') {
+          state.alcoholCocktail = state.alcoholCocktail.concat(
+            action.payload.hits
+          );
+          console.log(action.payload);
+          
+        }
+
+        if (action.meta.arg.mainParamsSearch.health === 'alcohol-free') {
+          state.alcoholFreeCocktail = state.alcoholFreeCocktail.concat(
+            action.payload.hits
+          );
+        }
+
+        state.paginationUrl = action.payload._links?.next?.href || '';
+
+        state.spinnerVisible = false;
+
+        if (action.payload.hits.length === 0) {
+          state.showError = true;
         }
       })
       .addCase(getRecipeThunk.rejected, (state) => {
-        state.spinnerVisible = false
-        state.showError = true
-      })
-
+        state.spinnerVisible = false;
+        state.showError = true;
+      });
   },
 });
 
@@ -100,7 +117,7 @@ export const {
   recipesDataReset,
   saveCurrentRecipe,
   saveRecipeName,
-  errorReset
+  errorReset,
 } = mainReducer.actions;
 
 export default mainReducer.reducer;
