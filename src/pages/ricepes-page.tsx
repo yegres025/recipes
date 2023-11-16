@@ -1,20 +1,22 @@
 import { useSelector, useDispatch } from 'react-redux';
 import { AppDispatch } from '../store';
 import { Link } from 'react-router-dom';
-import { errorReset, saveCurrentRecipe } from '../store/slice';
+import { errorReset, saveCurrentRecipe } from '../store/recipe-slice';
 import SearchForm from '../components/searchForm';
 import {
   InitialState,
   getRecipeThunk,
   recipesDataReset,
   saveRecipeName,
-} from '../store/slice';
+} from '../store/recipe-slice';
 import { MutatingDots } from 'react-loader-spinner';
 import { FormEvent } from 'react';
 
 export default function RecipesPage() {
   const { recipes, paginationUrl, recipeName, spinnerVisible, showError } =
-    useSelector((state: { mainReducer: InitialState }) => state.mainReducer);
+    useSelector(
+      (state: { recipesReducer: InitialState }) => state.recipesReducer
+    );
   const dispatch: AppDispatch = useDispatch();
 
   const paginationParam = {

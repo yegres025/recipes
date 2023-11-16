@@ -6,13 +6,13 @@ import {
   currentCuisines,
   recipesDataReset,
   InitialState,
-} from '../store/slice';
+} from '../store/recipe-slice';
 import { popularCuisines } from '../utilities/consts/map-data/map-consts';
 import { AppDispatch } from '../store';
 export default function PopularCuisines() {
   const [selectedCuisine, setSelectCuisine] = useState<string>('');
   const { cuisines } = useSelector(
-    (state: { mainReducer: InitialState }) => state.mainReducer
+    (state: { recipes: InitialState }) => state.recipes
   );
   const dispatch: AppDispatch = useDispatch();
   const navigate = useNavigate();
@@ -20,7 +20,6 @@ export default function PopularCuisines() {
   const searchParams = {
     cuisineType: cuisines,
   };
-    
 
   const handleSubmit = async () => {
     if (selectedCuisine === cuisines) {
@@ -28,7 +27,7 @@ export default function PopularCuisines() {
       return;
     }
     dispatch(recipesDataReset());
-    await dispatch(getRecipeThunk({ mainParamSearch: searchParams }));
+    await dispatch(getRecipeThunk({ mainParamsSearch: searchParams }));
     navigate('/recipe-page');
   };
 

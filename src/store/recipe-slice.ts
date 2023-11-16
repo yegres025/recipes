@@ -8,8 +8,6 @@ import {
 
 export interface InitialState {
   recipes: Recipes[];
-  alcoholCocktail: Recipes[];
-  alcoholFreeCocktail: Recipes[];
   cuisines: string;
   paginationUrl: string;
   currentRecipes: Recipes | [];
@@ -19,10 +17,11 @@ export interface InitialState {
   showError: boolean;
 }
 
+
+
+
 const initialState: InitialState = {
   recipes: [],
-  alcoholCocktail: [],
-  alcoholFreeCocktail: [],
   cuisines: '',
   paginationUrl: '',
   currentRecipes: [],
@@ -31,6 +30,7 @@ const initialState: InitialState = {
   spinnerVisible: false,
   showError: false,
 };
+
 
 export const getRecipeThunk = createAsyncThunk(
   'recipes/getRecipeData',
@@ -46,7 +46,9 @@ export const getRecipeThunk = createAsyncThunk(
   }
 );
 
-const mainReducer = createSlice({
+
+
+const recipesReducer = createSlice({
   name: 'recipes',
   initialState,
   reducers: {
@@ -78,24 +80,8 @@ const mainReducer = createSlice({
         state.spinnerVisible = true;
       })
       .addCase(getRecipeThunk.fulfilled, (state, action) => {
-        if (!action.meta.arg.mainParamsSearch.health) {
-          state.recipes = state.recipes.concat(action.payload.hits);
-        }
-
-        if (action.meta.arg.mainParamsSearch.health === 'alcohol-cocktail') {
-          state.alcoholCocktail = state.alcoholCocktail.concat(
-            action.payload.hits
-          );
-          console.log(action.payload);
-          
-        }
-
-        if (action.meta.arg.mainParamsSearch.health === 'alcohol-free') {
-          state.alcoholFreeCocktail = state.alcoholFreeCocktail.concat(
-            action.payload.hits
-          );
-        }
-
+        state.recipes = state.recipes.concat(action.payload.hits);
+        
         state.paginationUrl = action.payload._links?.next?.href || '';
 
         state.spinnerVisible = false;
@@ -118,6 +104,9 @@ export const {
   saveCurrentRecipe,
   saveRecipeName,
   errorReset,
-} = mainReducer.actions;
+} = recipesReducer.actions;
 
-export default mainReducer.reducer;
+
+export default recipesReducer.reducer;
+
+

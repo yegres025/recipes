@@ -5,28 +5,28 @@ import {
   InitialState,
   getRecipeThunk,
   recipesDataReset,
-  saveRecipeName
-} from '../store/slice';
+  saveRecipeName,
+} from '../store/recipe-slice';
 import { useNavigate } from 'react-router-dom';
 
 export default function CuratedCollections() {
   const dispatch: AppDispatch = useDispatch();
   const navigate = useNavigate();
   const { paginationUrl } = useSelector(
-    (state: { mainReducer: InitialState }) => state.mainReducer
+    (state: { recipes: InitialState }) => state.recipes
   );
-  
+
   const handleButton = async (param: string) => {
     const curatedCollectionsParams = {
       param,
-      paginationUrl
-    }
+      paginationUrl,
+    };
 
-    dispatch(saveRecipeName(param))
+    dispatch(saveRecipeName(param));
     dispatch(recipesDataReset());
     await dispatch(
       getRecipeThunk({
-        mainParamSearch: curatedCollectionsParams,
+        mainParamsSearch: curatedCollectionsParams,
       })
     );
     navigate('/recipe-page');

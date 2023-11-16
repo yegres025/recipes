@@ -1,8 +1,10 @@
 import { configureStore, combineReducers } from '@reduxjs/toolkit'
 import {useDispatch} from 'react-redux'
-import mainReducer from './slice'
+import recipesReducer from './recipe-slice'
+import cocktailsReducer from './coctails-slice'
 const rootReducer = combineReducers({
-    mainReducer
+    recipes: recipesReducer,
+    coctails: cocktailsReducer,
 }) 
 
 const store = configureStore({

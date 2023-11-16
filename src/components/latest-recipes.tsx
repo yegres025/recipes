@@ -1,16 +1,16 @@
 import { useSelector, useDispatch } from 'react-redux';
-import { InitialState } from '../store/slice';
+import { InitialState } from '../store/recipe-slice';
 import { AppDispatch } from '../store';
-import { saveCurrentRecipe } from '../store/slice';
+import { saveCurrentRecipe } from '../store/recipe-slice';
 import { Link } from 'react-router-dom';
 
 interface LatestRecipesProps {
-  header: string
+  header: string;
 }
 
-export default function LatestRecipes({header}: LatestRecipesProps) {
+export default function LatestRecipes({ header }: LatestRecipesProps) {
   const { recipes } = useSelector(
-    (state: { mainReducer: InitialState }) => state.mainReducer
+    (state: { recipes: InitialState }) => state.recipes
   );
   const dispatch: AppDispatch = useDispatch();
   const randomRecipes = recipes.slice(6, 30);
@@ -39,4 +39,3 @@ export default function LatestRecipes({header}: LatestRecipesProps) {
     </div>
   );
 }
-
