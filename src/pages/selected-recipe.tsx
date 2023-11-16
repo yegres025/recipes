@@ -1,9 +1,9 @@
 import { useSelector } from 'react-redux';
-import { InitialState } from '../store/slice';
+import { InitialState } from '../store/recipe-slice';
 
 export default function SelectedRecipe() {
   const { recipes, currentRecipe } = useSelector(
-    (state: { mainReducer: InitialState }) => state.mainReducer
+    (state: { recipes: InitialState }) => state.recipes
   );
 
   console.log(currentRecipe);
@@ -20,7 +20,7 @@ export default function SelectedRecipe() {
             {Math.round(currentRecipe.totalWeight)} g
           </span>
           <span>
-            Calories 
+            Calories
             <br />
             {Math.round(currentRecipe.totalNutrients.ENERC_KCAL.quantity)} kcal
           </span>
@@ -149,7 +149,7 @@ export default function SelectedRecipe() {
                 Other recipes
               </span>
               <div className='selected-recipe-nutrition-other-recipes'>
-                {recipes.slice(0,4).map((item) => (
+                {recipes.slice(0, 4).map((item) => (
                   <div
                     className='selected-recipe-nutrition-other-recipes-container'
                     key={item.recipe.uri}

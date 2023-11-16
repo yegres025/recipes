@@ -1,6 +1,6 @@
 import { useDispatch } from 'react-redux';
 import { AppDispatch } from '../store';
-import { errorReset } from '../store/slice';
+import { errorReset } from '../store/recipe-slice';
 import { useNavigate } from 'react-router-dom';
 export default function ErrorPage() {
   const dispatch: AppDispatch = useDispatch();
@@ -13,7 +13,6 @@ export default function ErrorPage() {
 
   return (
     <>
-
       <div className='error-page'>
         <span>Oooooops🙄</span>
         <br />
@@ -25,7 +24,6 @@ export default function ErrorPage() {
         <br />
         <button onClick={handleButtonErrorReset}> Go to Homepage!</button>
       </div>
-
     </>
   );
 }
