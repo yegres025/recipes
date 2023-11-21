@@ -16,17 +16,16 @@ export default function CuratedCollections() {
     (state: { recipes: InitialState }) => state.recipes
   );
 
-  const handleButton = async (param: string) => {
+  const handleButton = async (name: string) => {
     const curatedCollectionsParams = {
-      param,
-      paginationUrl,
+      q: name,
     };
 
-    dispatch(saveRecipeName(param));
+    dispatch(saveRecipeName(name));
     dispatch(recipesDataReset());
     await dispatch(
       getRecipeThunk({
-        mainParamsSearch: curatedCollectionsParams,
+        mainParamsSearch: curatedCollectionsParams, limit: 20
       })
     );
     navigate('/recipe-page');

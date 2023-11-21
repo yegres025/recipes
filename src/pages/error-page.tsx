@@ -8,13 +8,13 @@ export default function ErrorPage() {
 
   const handleButtonErrorReset = () => {
     dispatch(errorReset());
-    navigate('/recipe-page');
+    navigate('/');
   };
 
   return (
     <>
       <div className='error-page'>
-        <span>Oooooops🙄</span>
+        <span>Oooooops🙄 Error 404</span>
         <br />
         <span>Something went wrong</span>
         <br />

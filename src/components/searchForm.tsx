@@ -2,8 +2,8 @@ import { IconButton, TextField } from "@mui/material"
 import ClearIcon from '@mui/icons-material/Clear';
 
 interface SearchFormProps {
-    onSubmit: (event: React.FormEvent<HTMLFormElement>) => void;
-    onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+    onSubmit?: (event: React.FormEvent<HTMLFormElement>) => void;
+    onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
   }
 
 function SearchForm ({onSubmit, onChange}: SearchFormProps) {

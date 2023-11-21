@@ -104,9 +104,12 @@ header .header-logo {
   display: flex;
   flex-direction: column;
   border: 1px solid rgb(207, 207, 207);
+  border-top-left-radius: 14px;
+  border-top-right-radius: 14px;
 }
 .super-delicious-container .current-super-delicious img {
   width: 100%;
+  border-radius: 14px;
 }
 .super-delicious-container .current-super-delicious span {
   margin-top: 20px;
@@ -220,17 +223,19 @@ header .header-logo {
   margin: 0 auto;
   flex-direction: column;
 }
-.recipe-search-container .recipe-search-error {
+
+.recipe-search-error {
   display: flex;
   flex-direction: column;
   font-size: 24px;
   text-align: center;
 }
-.recipe-search-container .recipe-search-error img {
+.recipe-search-error img {
   width: 30%;
   margin: 20px auto;
 }
-.recipe-search-container .recipe-search-load-more-btn {
+
+.recipe-search-load-more-btn {
   display: block;
   margin: 20px auto;
   width: 120px;
@@ -413,4 +418,20 @@ header .header-logo {
 .spinner {
   justify-content: center;
   margin: 20px 0;
+}
+
+.drinks-container {
+  max-width: 1100px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.drinks-decoration {
+  position: absolute;
+  top: 1200px;
+  left: 0;
+  width: 100%;
+  height: 222px;
+  background-color: rgb(252, 231, 246);
+  z-index: -1;
 }/*# sourceMappingURL=App.css.map */

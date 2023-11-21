@@ -1,13 +1,12 @@
-import { url } from '../consts/api-params.ts/recipe-api';
+import { buildUrl } from '../consts/api-params.ts/recipe-api';
 import { OptionParams } from '../consts/api-params.ts/recipe-api';
-
 
 export interface FullResponeRecipes {
   count: number;
   from: number;
   to: number;
   hits: Recipes[];
-  _links: Links
+  _links: Links;
 }
 
 export interface Recipes {
@@ -138,26 +137,43 @@ interface SubTotalDailyNutrients {
 
 export interface GetRecipesParams {
   mainParamsSearch: OptionParams;
+  limit?: number;
 }
-
 
 async function getRecipes({
   mainParamsSearch,
-
+  limit,
 }: GetRecipesParams): Promise<FullResponeRecipes> {
-
-
-  const response = await fetch(url(mainParamsSearch));
+  const response = await fetch(buildUrl(mainParamsSearch));
   try {
     if (!response.ok) {
       throw new Error(`Error ${response.status}`);
-    }    
-    return await response.json();
+    }
+    const firstResult: FullResponeRecipes = await response.json();
+    
+    if (limit == 40) {      
+      if (firstResult._links.next !== undefined) {
+        const response = await fetch(firstResult._links.next.href);
+        if (!response.ok) {
+          throw new Error(`Error ${response.status}`);
+        }
+
+        const secondResult: FullResponeRecipes = await response.json();
+        const mergedResult = {
+          ...firstResult,
+          from: secondResult.from,
+          to: secondResult.to,
+          hits: firstResult.hits.concat(secondResult.hits),
+        };
+        
+      return mergedResult
+      }
+    }
+
+    return firstResult;
   } catch (error) {
     throw new Error('Catch err');
   }
-
 }
-
 
 export { getRecipes };
