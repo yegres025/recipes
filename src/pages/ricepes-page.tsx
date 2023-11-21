@@ -38,6 +38,7 @@ export default function RecipesPage() {
   const handleClickLoadMore = async () => {
     await dispatch(getRecipeThunk({ mainParamsSearch: paginationParam }));
   };
+  
   return (
     <div className='recipe-search-container'>
       <SearchForm
