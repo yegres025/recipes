@@ -8,6 +8,7 @@ export interface OptionParams {
   mealType?: string;
   paginationUrl?: string;
   health?: string;
+  dishType?: string;
 }
 
 const typeGuard = (value: string | boolean) => {
@@ -17,7 +18,7 @@ const typeGuard = (value: string | boolean) => {
   return '';
 };
 
-const url = function (option: OptionParams) {
+const buildUrl = function (option: OptionParams) {
   let url: URL = new URL('https://api.edamam.com/api/recipes/v2');
 
   if (option.paginationUrl) {
@@ -30,6 +31,10 @@ const url = function (option: OptionParams) {
 
   if(option.health){
     url.searchParams.append(recipeParams.health, option.health)
+  }
+
+  if(option.dishType){
+    url.searchParams.append(recipeParams.dishType, option.dishType)
   }
 
   if (option.q) {
@@ -48,7 +53,8 @@ const url = function (option: OptionParams) {
     url.searchParams.append(recipeParams.mealType, 'lunch');
   }
 
+  
   return url;
 };
 
-export { url };
+export { buildUrl };

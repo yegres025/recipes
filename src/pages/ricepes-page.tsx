@@ -1,7 +1,6 @@
 import { useSelector, useDispatch } from 'react-redux';
 import { AppDispatch } from '../store';
-import { Link } from 'react-router-dom';
-import { errorReset, saveCurrentRecipe } from '../store/recipe-slice';
+import { errorReset } from '../store/recipe-slice';
 import SearchForm from '../components/searchForm';
 import {
   InitialState,
@@ -9,14 +8,14 @@ import {
   recipesDataReset,
   saveRecipeName,
 } from '../store/recipe-slice';
+import RecipesList from '../components/recipes-list';
+import Error from '../components/error';
 import { MutatingDots } from 'react-loader-spinner';
 import { FormEvent } from 'react';
 
 export default function RecipesPage() {
   const { recipes, paginationUrl, recipeName, spinnerVisible, showError } =
-    useSelector(
-      (state: { recipesReducer: InitialState }) => state.recipesReducer
-    );
+    useSelector((state: { recipes: InitialState }) => state.recipes);
   const dispatch: AppDispatch = useDispatch();
 
   const paginationParam = {
@@ -36,50 +35,17 @@ export default function RecipesPage() {
     await dispatch(getRecipeThunk({ mainParamsSearch: currentRecipeParam }));
   };
 
-  const saveRecipe = (id: string) => {
-    const recipe = recipes.filter((item) => item.recipe.uri === id);
-    dispatch(saveCurrentRecipe(recipe));
-  };
-
-  const handleClickLoadMoreRecipes = async () => {
+  const handleClickLoadMore = async () => {
     await dispatch(getRecipeThunk({ mainParamsSearch: paginationParam }));
   };
-
   return (
     <div className='recipe-search-container'>
       <SearchForm
         onSubmit={(e) => handleSubmit(e)}
         onChange={(e) => dispatch(saveRecipeName(e.target.value))}
       />
-      <div className='recipe-search-grid'>
-        {recipes.map((item) => (
-          <div className='current-recipe-search' key={item.recipe.uri}>
-            <Link
-              className='current-recipe-search-link'
-              to='/recipe-page/selected-recipe'
-            >
-              <div>
-                <div>
-                  <img
-                    onClick={() => saveRecipe(item.recipe.uri)}
-                    src={item.recipe.image}
-                  />
-                </div>
-              </div>
-              <span>{item.recipe.label}</span>
-            </Link>
-          </div>
-        ))}
-      </div>
-      {showError ? (
-        <div className='recipe-search-error'>
-          <span>
-            Ooooops. <br /> There is nothing . Enter another recipe
-          </span>
-
-          <img src='src/assets/error-burak-gif.gif' />
-        </div>
-      ) : null}
+      <RecipesList recipes={recipes} />
+      {showError ? <Error /> : null}
       <MutatingDots
         visible={spinnerVisible}
         radius='14.5'
@@ -90,7 +56,7 @@ export default function RecipesPage() {
       />
       {!spinnerVisible && !showError && paginationUrl && (
         <button
-          onClick={handleClickLoadMoreRecipes}
+          onClick={handleClickLoadMore}
           className='recipe-search-load-more-btn'
         >
           Load More

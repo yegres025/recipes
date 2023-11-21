@@ -6,6 +6,8 @@ import {
   Recipes,
 } from '../utilities/api/get-data-recipe';
 
+
+
 export interface InitialState {
   recipes: Recipes[];
   cuisines: string;
@@ -16,8 +18,6 @@ export interface InitialState {
   spinnerVisible: boolean;
   showError: boolean;
 }
-
-
 
 
 const initialState: InitialState = {
@@ -34,10 +34,11 @@ const initialState: InitialState = {
 
 export const getRecipeThunk = createAsyncThunk(
   'recipes/getRecipeData',
-  async ({ mainParamsSearch }: GetRecipesParams, thunkAPI) => {
+  async ({ mainParamsSearch, limit }: GetRecipesParams, thunkAPI) => {
     try {
       const response = await getRecipes({
         mainParamsSearch,
+        limit
       });
       return response;
     } catch (error) {
@@ -79,13 +80,14 @@ const recipesReducer = createSlice({
       .addCase(getRecipeThunk.pending, (state) => {
         state.spinnerVisible = true;
       })
+
       .addCase(getRecipeThunk.fulfilled, (state, action) => {
         state.recipes = state.recipes.concat(action.payload.hits);
         
         state.paginationUrl = action.payload._links?.next?.href || '';
 
         state.spinnerVisible = false;
-
+        
         if (action.payload.hits.length === 0) {
           state.showError = true;
         }

@@ -1,19 +1,19 @@
-import { useSelector, useDispatch } from 'react-redux';
-import { InitialState } from '../store/recipe-slice';
+import { useDispatch } from 'react-redux';
 import { AppDispatch } from '../store';
 import { saveCurrentRecipe } from '../store/recipe-slice';
 import { Link } from 'react-router-dom';
+import { Recipes } from '../utilities/api/get-data-recipe';
 
 interface LatestRecipesProps {
   header: string;
+  recipes: Recipes[]
 }
 
-export default function LatestRecipes({ header }: LatestRecipesProps) {
-  const { recipes } = useSelector(
-    (state: { recipes: InitialState }) => state.recipes
-  );
+export default function LatestRecipes({ header, recipes }: LatestRecipesProps) {
+
   const dispatch: AppDispatch = useDispatch();
   const randomRecipes = recipes.slice(6, 30);
+  
 
   const saveRecipe = (id: string) => {
     const recipe = recipes.filter((item) => item.recipe.uri === id);

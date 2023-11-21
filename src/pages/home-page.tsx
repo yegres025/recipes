@@ -24,8 +24,7 @@ export default function HomePage() {
 
   useLayoutEffect(() => {
     dispatch(recipesDataReset());
-    dispatch(getRecipeThunk({ mainParamsSearch: defaultRandomRecipeParams }));
-    dispatch(getRecipeThunk({ mainParamsSearch: defaultRandomRecipeParams }));
+    dispatch(getRecipeThunk({ mainParamsSearch: defaultRandomRecipeParams, limit: 40}));
   }, [dispatch]);
 
   return (
@@ -34,7 +33,7 @@ export default function HomePage() {
       <PopularCuisines />
       <SuperDelicious randomRecipes={recipes} />
       <CuratedCollections />
-      <LatestRecipes header='Latest Recipes' />
+      <LatestRecipes header='Latest Recipes' recipes={recipes}/>
     </>
   );
 }
